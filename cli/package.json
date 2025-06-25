@@ -1,0 +1,20 @@
+{
+  "name": "pmtool",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "CLI tool for managing projects and tasks via terminal.",
+  "bin": {
+    "pmtool": "bin/index.js"
+  },
+  "scripts": {
+    "start": "node bin/index.js"
+  },
+  "dependencies": {
+    "axios": "^1.6.7",
+    "chalk": "^5.3.0",
+    "commander": "^11.1.0",
+    "conf": "^11.1.0",
+    "inquirer": "^9.2.8"
+  }
+}
+
