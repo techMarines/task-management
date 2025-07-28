@@ -14,31 +14,3 @@ export async function getAllUsers(req, res) {
         });
     }
 }
-
-export async function createUser(req, res) {
-    try {
-        const { userName, hashedPassword } = req.body;
-
-        const userExists = await userServices.checkUserExists(
-            userName,
-            hashedPassword,
-        );
-        console.log(userExists);
-        if (userExists) {
-            return res
-                .status(409)
-                .json({
-                    message:
-                        "account already exists with given credentials please log in instead",
-                });
-        }
-        await userServices.createUser(userName, hashedPassword);
-
-        res.status(201).json({ message: "user created successfully" });
-    } catch (err) {
-        res.status(500).json({
-            message: "Error while creating user",
-            error: err.message,
-        });
-    }
-}
