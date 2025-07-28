@@ -1,0 +1,150 @@
+generator client {
+    provider = "prisma-client-js"
+    // output   = "../generated/prisma"
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+model User {
+    id             Int       @id @default(autoincrement()) @map("user_id")
+    name           String    @map("user_name") @db.VarChar(128)
+    hashedPassword String    @map("hashed_password") @db.VarChar(128)
+    isDeleted      Boolean   @default(false) @map("is_deleted")
+    deletedAt      DateTime? @map("deleted_at") @db.Timestamp(6)
+    createdAt      DateTime? @default(now()) @map("created_at") @db.Timestamp(6)
+    updatedAt      DateTime? @updatedAt @map("updated_at") @db.Timestamp(6)
+
+    assignedFeatures   FeatureDetail[]
+    projectMemberships UserProject[]
+
+    @@map("users")
+}
+
+model Project {
+    id          Int       @id @default(autoincrement()) @map("project_id")
+    name        String    @map("project_name") @db.VarChar(128)
+    description String?   @map("project_description")
+    isDeleted   Boolean   @default(false) @map("is_deleted")
+    deletedAt   DateTime? @map("deleted_at") @db.Timestamp(6)
+    createdAt   DateTime? @default(now()) @map("created_at") @db.Timestamp(6)
+    updatedAt   DateTime? @updatedAt @map("updated_at") @db.Timestamp(6)
+
+    categories  Category[]
+    invites     ProjectInvite[]
+    roles       ProjectRole[]
+    memberships UserProject[]
+
+    @@map("projects")
+}
+
+model ProjectInvite {
+    id         Int       @id @default(autoincrement()) @map("project_invite_id")
+    projectId  Int       @map("project_id")
+    inviteCode String    @map("invite_code") @db.Uuid
+    createdAt  DateTime? @default(now()) @map("created_at") @db.Timestamp(6)
+    expiresAt  DateTime  @map("expires_at") @db.Timestamp(6)
+
+    project Project @relation(fields: [projectId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+    @@map("project_invites")
+}
+
+model UserProject {
+    userId    Int @map("user_id")
+    projectId Int @map("project_id")
+    roleId    Int @map("project_role_id")
+
+    project Project     @relation(fields: [projectId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+    role    ProjectRole @relation(fields: [roleId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    user    User        @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+    @@id([userId, projectId])
+    @@index([projectId], map: "idx_user_project_project_id")
+    @@index([userId], map: "idx_user_project_user_id")
+    @@map("user_project")
+}
+
+model ProjectRole {
+    id        Int    @id @default(autoincrement()) @map("project_role_id")
+    name      String @map("project_role_name") @db.VarChar(64)
+    projectId Int    @map("project_id")
+
+    project     Project       @relation(fields: [projectId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+    memberships UserProject[]
+
+    @@unique([projectId, name])
+    @@map("project_roles")
+}
+
+model Category {
+    id          Int       @id @default(autoincrement()) @map("category_id")
+    projectId   Int       @map("project_id")
+    name        String    @map("category_name") @db.VarChar(128)
+    description String?   @map("category_description")
+    colorCode   String    @map("category_color_code") @db.VarChar(10)
+    parentId    Int?      @map("category_parent_id")
+    isDeleted   Boolean   @default(false) @map("is_deleted")
+    deletedAt   DateTime? @map("deleted_at") @db.Timestamp(6)
+    createdAt   DateTime? @default(now()) @map("created_at") @db.Timestamp(6)
+    updatedAt   DateTime? @updatedAt @map("updated_at") @db.Timestamp(6)
+
+    parent   Category?  @relation("CategoryToCategory", fields: [parentId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+    children Category[] @relation("CategoryToCategory")
+    project  Project    @relation(fields: [projectId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+    features Feature[]
+
+    @@index([parentId], map: "idx_category_parent_id")
+    @@map("categories")
+}
+
+enum FeatureStatus {
+    open
+    inWork
+    done
+}
+
+enum FeaturePriority {
+    low
+    medium
+    high
+}
+
+model Feature {
+    id         Int       @id @default(autoincrement()) @map("feature_id")
+    name       String    @map("feature_name") @db.VarChar(128)
+    parentId   Int?      @map("feature_parent_id")
+    categoryId Int       @map("feature_category_id")
+    isDeleted  Boolean   @default(false) @map("is_deleted")
+    deletedAt  DateTime? @map("deleted_at") @db.Timestamp(6)
+    createdAt  DateTime? @default(now()) @map("created_at") @db.Timestamp(6)
+    updatedAt  DateTime? @updatedAt @map("updated_at") @db.Timestamp(6)
+
+    details  FeatureDetail?
+    category Category       @relation(fields: [categoryId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+    parent   Feature?       @relation("FeatureToFeature", fields: [parentId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+    children Feature[]      @relation("FeatureToFeature")
+
+    @@index([parentId], map: "idx_feature_parent_id")
+    @@map("features")
+}
+
+model FeatureDetail {
+    id                 Int              @id @default(autoincrement()) @map("feature_detail_id")
+    featureId          Int              @unique @map("feature_id")
+    description        String?          @map("feature_description")
+    acceptanceCriteria String?          @map("feature_acceptance_criteria")
+    gitBranch          String?          @map("feature_git_branch") @db.VarChar(128)
+    status             FeatureStatus?   @map("feature_status")
+    assigneeId         Int?             @map("assignee_user_id")
+    dueDate            DateTime?        @map("due_date") @db.Date
+    priority           FeaturePriority?
+
+    assignee User?   @relation(fields: [assigneeId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    feature  Feature @relation(fields: [featureId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+    @@index([featureId], map: "idx_feature_details_id")
+    @@map("feature_details")
+}
