@@ -15,6 +15,11 @@ app.get("/", (req, res) => {
 
 app.use("/api", apiRouter);
 
+// {*splat} matchs all paths, so if none of the api routes were matched then we can return 404 not found
+app.get("/{*splat}", (req, res) => {
+    res.status(404).message({ message: "page not found, is the url correct?" });
+});
+
 app.listen(PORT, () => {
     console.log(`Server has started on port: ${PORT}`);
 });
