@@ -22,5 +22,12 @@
   },
   "devDependencies": {
     "prisma": "^6.12.0"
+  },
+  "imports": {
+    "#api/*": "./src/api/*.js",
+    "#services/*": "./src/services/*.js",
+    "#middlewares/*": "./src/middlewares/*.js", 
+    "#utils/*": "./src/utils/*.js",
+    "#config/*": "./src/config/*.js"
   }
 }

@@ -1,4 +1,4 @@
-import prisma from "../config/prismaClient.js";
+import prisma from "#config/prisma.client";
 
 export async function createUser(userName, hashedPassword) {
     return await prisma.user.create({

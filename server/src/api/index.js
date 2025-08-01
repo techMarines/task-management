@@ -1,8 +1,8 @@
 import { Router } from "express";
-import userRoutes from "./users/user.routes.js";
-import projectRoutes from "./projects/project.routes.js";
-import authRoutes from "./auth/auth.routes.js";
-import authMiddleware from "../middlewares/authMiddleware.js";
+import userRoutes from "#api/users/user.routes";
+import projectRoutes from "#api/projects/project.routes";
+import authRoutes from "#api/auth/auth.routes";
+import authMiddleware from "#middlewares/auth.middleware";
 
 const router = Router();
 
