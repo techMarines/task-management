@@ -1,3 +1,4 @@
+import { ApiError } from "#utils/api.error";
 import jwt from "jsonwebtoken";
 
 function authMiddleware(req, res, next) {
@@ -5,14 +6,14 @@ function authMiddleware(req, res, next) {
 
     // postman sends the token as Bearer <token>
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
-        return res.status(401).json({ message: "No token provided or token in malformed" });
+        throw new ApiError(401, "No token provided or token is malformed");
     }
 
     const token = authHeader.split(" ")[1];
 
     jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
         if (err) {
-            return res.status(401).json({ message: "Invalid token" });
+            throw new ApiError(401, "Invalid token");
         }
 
         req.userId = decoded.id;

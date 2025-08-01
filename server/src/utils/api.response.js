@@ -1,4 +1,4 @@
-export default class ApiResponse {
+export class ApiResponse {
     constructor(statusCode, data = "", message = "success") {
         if (!statusCode) throw new Error("ApiResponse requires a statusCode");
         this.statusCode = statusCode;

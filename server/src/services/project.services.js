@@ -1,3 +1,10 @@
 import prisma from "#config/prisma.client";
 
-export function createProject() {}
+export async function createProject(projectName, projectDescription) {
+    return await prisma.project.create({
+        data: {
+            name: projectName,
+            description: projectDescription,
+        },
+    });
+}
