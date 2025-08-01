@@ -1,4 +1,4 @@
-import ApiError from "#utils/api.error";
+import { ApiError } from "#utils/api.error";
 
 export default (err, req, res, next) => {
     // if the server has already started sending response to client sending another response would cause a crash, by calling next(err) delegate the

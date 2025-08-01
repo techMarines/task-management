@@ -1,8 +1,8 @@
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import * as authServices from "#services/auth.services";
-import ApiResponse from "#utils/api.response";
-import ApiError from "#utils/api.error";
+import { ApiResponse } from "#utils/api.response";
+import { ApiError } from "#utils/api.error";
 
 export async function register(req, res) {
     const { userName, password } = req.body;
