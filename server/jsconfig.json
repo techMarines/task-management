@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "#utils/*": ["./src/utils/*"],
+      "#services/*": ["./src/services/*"],
+      "#api/*": ["./src/api/*.js"],
+      "#config/*": ["./src/config/*"],
+      "#middlewares/*": ["./src/middlewares/*"]
+    }
+  },
+  "exclude": ["node_modules"]
+}
