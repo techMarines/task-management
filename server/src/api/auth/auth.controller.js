@@ -10,34 +10,40 @@ export async function register(req, res) {
     // encrypt the password
     const hashedPassword = bcrypt.hashSync(password, 8);
 
-    const userAlreadyRegistered = await authServices.checkIfUserExists(userName);
-    if (userAlreadyRegistered) {
+    const user = await authServices.checkIfUserExists(userName);
+    if (user) {
         throw new ApiError(409, "user already registered, login in instead");
     }
 
-    const user = await authServices.createUser(userName, hashedPassword);
+    const createdUser = await authServices.createUser(userName, hashedPassword);
 
     // create a token
-    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: "24h" });
+    const token = jwt.sign({ id: createdUser.id }, process.env.JWT_SECRET, { expiresIn: "24h" });
 
-    res.status(201).json(new ApiResponse(201, { token }, "User registered successfuly"));
+    res.status(201).json(
+        new ApiResponse(
+            201,
+            { displayName: createdUser.displayName, token },
+            "User registered successfuly",
+        ),
+    );
 }
 
 export async function login(req, res) {
     const { userName, password } = req.body;
 
-    const userAlreadyRegistered = await authServices.checkIfUserExists(userName);
-    if (!userAlreadyRegistered) {
+    const user = await authServices.checkIfUserExists(userName);
+    if (!user) {
         // being intentionally vague about correctness of username to make it harder to randomly guess username
         throw new ApiError(401, "Wrong username or password");
     }
 
-    const isPasswordValid = bcrypt.compareSync(password, userAlreadyRegistered.hashedPassword);
+    const isPasswordValid = bcrypt.compareSync(password, user.hashedPassword);
     if (!isPasswordValid) {
         throw new ApiError(401, "Wrong username or password");
     }
 
-    const token = jwt.sign({ id: userAlreadyRegistered.id }, process.env.JWT_SECRET, {
+    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
         expiresIn: "24h",
     });
 
