@@ -1,4 +1,4 @@
-export const HTTP_RESPONSE_CODE = {
+export const HTTP_RESPONSE_CODE = Object.freeze({
     NOT_FOUND: 404, // resource not found
     CREATED: 201,
     CONFLICT: 409, // update not possible due to conflict with existing state of db
@@ -6,4 +6,4 @@ export const HTTP_RESPONSE_CODE = {
     SUCCESS: 200,
     UNAUTHORIZED: 401, // user is not authorized to req a resource, e.g: making get something req without logging in
     SERVER_ERROR: 500, // unknown server error
-};
+});
