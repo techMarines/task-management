@@ -6,7 +6,8 @@
       "#services/*": ["./src/services/*"],
       "#api/*": ["./src/api/*.js"],
       "#config/*": ["./src/config/*"],
-      "#middlewares/*": ["./src/middlewares/*"]
+      "#middlewares/*": ["./src/middlewares/*"],
+      "#constants/*": ["./src/constants/*"]
     }
   },
   "exclude": ["node_modules"]

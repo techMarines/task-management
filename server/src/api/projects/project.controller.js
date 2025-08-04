@@ -1,6 +1,7 @@
 import { ApiError } from "#utils/api.error";
 import { ApiResponse } from "#utils/api.response";
 import * as projectServices from "#services/project.services";
+import { HTTP_RESPONSE_CODE } from "#constants/api.response.codes";
 
 export async function createProject(req, res) {
     // userId is put into the req by the authMiddleware
@@ -8,7 +9,8 @@ export async function createProject(req, res) {
     let { projectName, projectDescription } = req.body;
 
     // validate input
-    if (!projectName) throw new ApiError(400, "project name can't be empty");
+    if (!projectName)
+        throw new ApiError(HTTP_RESPONSE_CODE.BAD_REQUEST, "project name can't be empty");
     if (!projectDescription) projectDescription = `${projectName}`;
 
     // this calls a function which uses transaction to create project then create a project role 'manager' and assign it to user
@@ -18,11 +20,15 @@ export async function createProject(req, res) {
         projectDescription,
     );
     // project is returned if all queries were successfull
-    if (!project) throw new ApiError(500, "internal server error, project not created");
+    if (!project)
+        throw new ApiError(
+            HTTP_RESPONSE_CODE.SERVER_ERROR,
+            "internal server error, project not created",
+        );
 
-    res.status(201).json(
+    res.status(HTTP_RESPONSE_CODE.CREATED).json(
         new ApiResponse(
-            201,
+            HTTP_RESPONSE_CODE.CREATED,
             {
                 projectName: project.name,
                 projectDescription: project.description,

@@ -32,6 +32,7 @@
     "#services/*": "./src/services/*.js",
     "#middlewares/*": "./src/middlewares/*.js",
     "#utils/*": "./src/utils/*.js",
-    "#config/*": "./src/config/*.js"
+    "#config/*": "./src/config/*.js",
+    "#constants/*": "./src/constants/*.js"
   }
 }
