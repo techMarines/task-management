@@ -1,4 +1,5 @@
 import { ApiError } from "#utils/api.error";
+import logger from "#utils/logger";
 
 export default (err, req, res, next) => {
     // if the server has already started sending response to client sending another response would cause a crash, by calling next(err) delegate the
@@ -15,7 +16,7 @@ export default (err, req, res, next) => {
     }
 
     // if the error is an unexpected error log it for debugging.
-    console.log(err);
+    logger.error({ err });
 
     // send generic 500 status code for every other error
     return res.status(500).json({
