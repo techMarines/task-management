@@ -13,10 +13,7 @@ export async function register(req, res) {
 
     const user = await authServices.checkIfUserExists(userName);
     if (user) {
-        throw new ApiError(
-            HTTP_RESPONSE_CODE.CONFLICT,
-            "user already registered, login in instead",
-        );
+        throw new ApiError(HTTP_RESPONSE_CODE.CONFLICT, "user already registered, login in instead");
     }
 
     const createdUser = await authServices.createUser(userName, hashedPassword);
@@ -25,11 +22,7 @@ export async function register(req, res) {
     const token = jwt.sign({ id: createdUser.id }, process.env.JWT_SECRET, { expiresIn: "24h" });
 
     res.status(HTTP_RESPONSE_CODE.CREATED).json(
-        new ApiResponse(
-            HTTP_RESPONSE_CODE.CREATED,
-            { displayName: createdUser.displayName, token },
-            "User registered successfuly",
-        ),
+        new ApiResponse(HTTP_RESPONSE_CODE.CREATED, { displayName: createdUser.displayName, token }, "User registered successfuly"),
     );
 }
 
@@ -52,6 +45,6 @@ export async function login(req, res) {
     });
 
     res.status(HTTP_RESPONSE_CODE.SUCCESS).json(
-        new ApiResponse(HTTP_RESPONSE_CODE.SUCCESS, { token }, "User logged in successfuly"),
+        new ApiResponse(HTTP_RESPONSE_CODE.SUCCESS, { displayName: user.displayName, token }, "User logged in successfuly"),
     );
 }

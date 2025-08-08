@@ -14,12 +14,13 @@
   "author": "techMarines",
   "license": "MIT",
   "dependencies": {
-    "bcryptjs": "^3.0.2",
     "@prisma/client": "^6.13.0",
+    "bcryptjs": "^3.0.2",
     "dotenv": "^17.2.1",
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
-    "pino": "^9.7.0"
+    "pino": "^9.7.0",
+    "sqids": "^0.3.0"
   },
   "devDependencies": {
     "i": "^0.3.7",
