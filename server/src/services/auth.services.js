@@ -18,3 +18,11 @@ export async function checkIfUserExists(userName) {
         },
     });
 }
+
+export async function getUserById(userId) {
+    return await prisma.user.findUnique({
+        where: {
+            userId: userId,
+        },
+    });
+}

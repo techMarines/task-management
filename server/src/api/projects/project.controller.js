@@ -34,3 +34,11 @@ export async function createProject(req, res) {
         ),
     );
 }
+
+export async function getProjectsByUserId(req, res) {
+    const userId = req.userId;
+
+    const projects = await projectServices.getProjectsByUserId(userId);
+
+    res.status(HTTP_RESPONSE_CODE.SUCCESS).json(new ApiResponse(HTTP_RESPONSE_CODE.SUCCESS, { projects }));
+}

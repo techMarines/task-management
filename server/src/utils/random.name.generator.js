@@ -22,5 +22,5 @@ export function generateRandomName() {
         const randomWord = randomWords[Math.floor(Math.random() * len)];
         selectedWords.push(randomWord);
     }
-    return selectedWords.join("_");
+    return selectedWords.join("");
 }

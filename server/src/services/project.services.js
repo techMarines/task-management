@@ -50,4 +50,14 @@ export async function createProjectForUser(createrUserId, projectName, projectDe
     });
 }
 
-export async function getProjectById() {}
+export async function getProjectsByUserId(userId) {
+    return await prisma.project.findMany({
+        where: {
+            projectUsers: {
+                some: {
+                    userId: userId,
+                },
+            },
+        },
+    });
+}
