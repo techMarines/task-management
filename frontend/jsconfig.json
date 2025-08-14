@@ -1,0 +1,12 @@
+{
+    "compilerOptions": {
+        "baseUrl": ".",
+        "paths": {
+            "#components/*": ["src/components/*"],
+            "#assets/*": ["src/assets/*"],
+            "#pages/*": ["src/pages/*"],
+            "#constants/*": ["src/constants/*"],
+            "#services/*": ["src/services/*"]
+        }
+    }
+} // prettier.config.js
