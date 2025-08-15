@@ -1,16 +1,7 @@
-import nodemailer from "nodemailer";
+import transporter from "#config/nodemailer";
 import logger from "#utils/logger";
 
 async function sendEmail({ to, subject, html }) {
-    // Create a transporter object using App Password
-    const transporter = nodemailer.createTransport({
-        host: "smtp.ethereal.email",
-        port: 587,
-        auth: {
-            user: "carson.corkery@ethereal.email",
-            pass: "JHfZGHcCP1zeDACCjk",
-        },
-    });
     //  Define the mail options
     const mailOptions = {
         from: `"Orbit" <${process.env.EMAIL_ADDRESS}>`, // Sender name and address
