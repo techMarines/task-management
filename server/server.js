@@ -10,18 +10,18 @@ dotenv.config();
 const PORT = process.env.PORT;
 const app = express();
 
-// middleware for cross origin requests
-const whitelist = ["http://localhost:5173"];
-const corsOptions = {
-    origin: function (origin, callback) {
-        if (whitelist.indexOf(origin) !== -1) {
-            callback(null, true);
-        } else {
-            callback(new Error("Not allowed by CORS"));
-        }
-    },
-};
-app.use(cors(corsOptions));
+// // middleware for cross origin requests
+// const whitelist = ["http://localhost:5173"];
+// const corsOptions = {
+//     origin: function (origin, callback) {
+//         if (whitelist.indexOf(origin) !== -1) {
+//             callback(null, true);
+//         } else {
+//             callback(new Error("Not allowed by CORS"));
+//         }
+//     },
+// };
+// app.use(cors(corsOptions));
 
 // middleware for parsing json
 app.use(express.json());
