@@ -49,5 +49,13 @@ export async function getProjectsByUserId(req, res) {
 
     const projects = await projectServices.getProjectsByUserId(userId);
 
-    res.status(HTTP_RESPONSE_CODE.SUCCESS).json(new ApiResponse(HTTP_RESPONSE_CODE.SUCCESS, { projects }));
+    res.status(HTTP_RESPONSE_CODE.SUCCESS).json(
+        new ApiResponse(
+            HTTP_RESPONSE_CODE.SUCCESS,
+            projects.map((project) => ({
+                ...project, // spread the object
+                id: sqids.encode([project.id]), // override the original id with encoded id
+            })),
+        ),
+    );
 }
