@@ -1,5 +1,5 @@
 {
-  "name": "pmt-server",
+  "name": "orbit-server",
   "version": "1.0.0",
   "description": "A minimalistic tool to streamline project management for small dev teams",
   "type": "module",
