@@ -46,18 +46,37 @@ export async function createProjectForUser(createrUserId, projectName, projectDe
             },
         });
 
+        // add the role field to the response
+        project.role = managerRole.name;
+
         return project;
     });
 }
 
 export async function getProjectsByUserId(userId) {
-    return await prisma.project.findMany({
+    // get all projects and project roles related to the projectUsers table where userId is equal to the user id provided
+    const memberships = await prisma.projectUser.findMany({
         where: {
-            projectUsers: {
-                some: {
-                    userId: userId,
-                },
-            },
+            userId: userId,
+        },
+        include: {
+            project: true, // Include the full project object
+            projectRoles: true, // Include the full role object
         },
     });
+
+    // example output
+    // [
+    //   { userId: 1, projectId: 101, roleId: 1, project: { ... }, projectRoles: { name: 'Manager', ... } },
+    //   { userId: 1, projectId: 102, roleId: 5, project: { ... }, projectRoles: { name: 'Member', ... } }
+    // ]
+
+    const projectsWithRoles = memberships.map((membership) => ({
+        // Spread all the project details (id, name, description, etc.)
+        ...membership.project,
+        // Add a 'role' property with the role name
+        role: membership.projectRoles.name,
+    }));
+
+    return projectsWithRoles;
 }

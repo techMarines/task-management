@@ -19,8 +19,48 @@ export async function checkIfUserExists(userName) {
     });
 }
 
-export async function getUserById(userId) {
-    return await prisma.user.findUnique({
+export async function addUserEmailVerificationToken(userId, token, expiresAt) {
+    return await prisma.userEmailVerificationToken.create({
+        data: {
+            userId: userId,
+            verificationToken: token,
+            expiresAt: expiresAt,
+        },
+    });
+}
+
+export async function verifyEmail(userId, token) {
+    return await prisma.$transaction(async (tx) => {
+        // get all user tokens
+        const userTokens = await tx.userEmailVerificationToken.findMany({
+            where: {
+                userId: userId,
+            },
+        });
+
+        for (const userToken of userTokens) {
+            // user token is same as given token and it is not expired
+            if (token === userToken.verificationToken && userToken.expiresAt > new Date()) {
+                const verifyUser = await tx.user.update({
+                    where: {
+                        id: userId,
+                    },
+                    data: {
+                        isVerified: true,
+                    },
+                });
+
+                if (verifyUser) return true; // user verification updated
+                return false; // if user table isn't updated we weren't able to update the verification status
+            }
+        }
+
+        return false; // no user token matchs the given token
+    });
+}
+
+export async function getUserTokens(userId) {
+    return await prisma.userEmailVerificationToken.findMany({
         where: {
             userId: userId,
         },

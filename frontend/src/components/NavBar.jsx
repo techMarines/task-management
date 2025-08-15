@@ -1,5 +1,4 @@
 import { Link } from "react-router";
-import Button from "./ui/Button";
 import { useState } from "react";
 
 export default function NavBar() {
@@ -16,9 +15,9 @@ export default function NavBar() {
         "block text-[22px] mx-5 sm:ml-10 my-8 opacity-70 font-semibold text-purple-100 hover:border-b-2 hover:border-b-purple-200";
 
     return (
-        <nav className="flex h-16 border-b-gray-700 sm:h-20 sm:border-b-2">
+        <nav className="flex min-h-1/12 border-b-gray-700 sm:border-b-2">
             {/* logo section */}
-            <section className="md:2/12 ml-[4%] flex h-full w-2/12 flex-col justify-center w-1/12">
+            <section className="w-2/12 ml-[4%] flex h-full flex-col justify-center">
                 <Link to="/" className="flex">
                     <img src="/OrbitLogo-Medium.svg" alt="Orbit Logo" />
                     <img src="/OrbitText-Medium.svg" alt="Orbit in Text" className="inline-block md:ml-6" />

@@ -1,10 +1,11 @@
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import * as authServices from "#services/auth.services";
+import { getUserById } from "#services/user.services";
 import { ApiResponse } from "#utils/api.response";
 import { ApiError } from "#utils/api.error";
 import { HTTP_RESPONSE_CODE } from "#constants/api.response.codes";
-import transporter from "#config/nodemailer";
+import sendEmail from "#services/email.services";
 import sqids from "#config/sqids";
 
 const saltRounds = 12;
@@ -67,29 +68,71 @@ export async function login(req, res) {
 export async function sendLinkForEmailVerification(req, res) {
     const userId = req.userId;
 
-    const user = await authServices.getUserById(userId);
+    const user = await getUserById(userId);
     // should never happend unless user was deleted for some reason or server crashed
     if (!user) {
         throw new ApiError(HTTP_RESPONSE_CODE.SERVER_ERROR, "User not found");
     }
 
-    const randomToken = crypto.randomUUID();
-    const urlToVerifyEmail = `http://localhost:5173/auth/verify-email/${randomToken}`;
+    const verificationToken = crypto.randomUUID();
+    // set 30 minutes expiration time
+    const expiresAt = new Date(Date.now() + 30 * 60 * 1000);
 
-    (async () => {
-        const info = await transporter.sendMail({
-            from: `"orbit.io200" <${process.env.EMAIL}>`,
-            to: user.name,
-            subject: "Verify your email for orbit sign up",
-            text: `The link to verify your email for orbit account creation has been attached below, If this action wasn't performed by you then please
-                   use the report button to stop unverified sign up attempt using your email!.`,
-            html: `<a href=${urlToVerifyEmail}>`,
-        });
+    const userTokens = await authServices.getUserTokens(userId);
+    let validTokenCount = 0;
 
-        console.log(info);
-    })();
+    for (const userToken of userTokens) {
+        if (userToken.expiresAt > new Date()) {
+            validTokenCount++;
+        }
+    }
+
+    if (validTokenCount >= 2)
+        throw new ApiError(
+            HTTP_RESPONSE_CODE.BAD_REQUEST,
+            "Two valid links already sent for verification, kindly use one of those or try again later",
+        );
+
+    const dbToken = await authServices.addUserEmailVerificationToken(userId, verificationToken, expiresAt);
+    if (!dbToken)
+        throw new ApiError(HTTP_RESPONSE_CODE.SERVER_ERROR, "Couldn't send token due to server error, try again later.");
+
+    // Use your email service to send the verification email
+    const verificationLink = `http://localhost:5173/verify-email/${verificationToken}`;
+
+    const emailStatus = await sendEmail({
+        to: user.name,
+        subject: "Verify Your Orbit Account",
+        html: `
+      <h1>Welcome to Orbit!</h1>
+      <p>Please click the link below to verify your email address:</p>
+      <a href="${verificationLink}">Verify My Email</a>
+      <p>The above link is only valid for 30 minutes</p>
+    `,
+    });
+
+    if (emailStatus.success) {
+        res.status(HTTP_RESPONSE_CODE.SUCCESS).json(
+            new ApiResponse(HTTP_RESPONSE_CODE.SUCCESS, {}, "Verification Link Sent please check the email"),
+        );
+    } else {
+        res.status(HTTP_RESPONSE_CODE.SERVER_ERROR, "Couldn't send token due to issues with mailing service");
+    }
 }
 
 export async function verifyEmail(req, res) {
-    const token = req.params;
+    const userId = req.userId;
+    const { token } = req.params;
+
+    const user = await getUserById(userId);
+    if (user.isVerified)
+        return res
+            .status(HTTP_RESPONSE_CODE.SUCCESS)
+            .json(new ApiResponse(HTTP_RESPONSE_CODE.SUCCESS, {}, "Email already verified!"));
+
+    const verifyEmail = await authServices.verifyEmail(userId, token);
+
+    if (!verifyEmail) throw new ApiError(HTTP_RESPONSE_CODE.UNAUTHORIZED, "Link is expired use a newer one");
+
+    res.status(HTTP_RESPONSE_CODE.SUCCESS).json(new ApiResponse(HTTP_RESPONSE_CODE.SUCCESS, {}, "Email verified"));
 }

@@ -1,11 +1,15 @@
 import NavBar from "#components/NavBar";
 import { Outlet } from "react-router";
+import { getUserDetails } from "#services/profileServices";
 
 function App() {
     return (
-        <div className="flex min-h-screen flex-col bg-gray-900 text-white">
+        <div className="h-screen flex flex-col bg-gray-900 text-white">
             <NavBar />
-            <Outlet />
+            {/* This main element will grow to fill the remaining space */}
+            <main className="grow overflow-auto">
+                <Outlet />
+            </main>
         </div>
     );
 }

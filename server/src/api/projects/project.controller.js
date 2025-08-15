@@ -21,17 +21,10 @@ export async function createProject(req, res) {
     // project is returned if all queries were successfull
     if (!project) throw new ApiError(HTTP_RESPONSE_CODE.SERVER_ERROR, "Internal server error, project not created");
 
+    project.id = sqids.encode([project.id]);
+
     res.status(HTTP_RESPONSE_CODE.CREATED).json(
-        new ApiResponse(
-            HTTP_RESPONSE_CODE.CREATED,
-            {
-                projectId: sqids.encode([project.id]),
-                projectName: project.name,
-                projectDescription: project.description,
-                starterRole: "Manager",
-            },
-            "Project created successfuly",
-        ),
+        new ApiResponse(HTTP_RESPONSE_CODE.CREATED, project, "Project created successfuly"),
     );
 }
 
@@ -40,5 +33,13 @@ export async function getProjectsByUserId(req, res) {
 
     const projects = await projectServices.getProjectsByUserId(userId);
 
-    res.status(HTTP_RESPONSE_CODE.SUCCESS).json(new ApiResponse(HTTP_RESPONSE_CODE.SUCCESS, { projects }));
+    res.status(HTTP_RESPONSE_CODE.SUCCESS).json(
+        new ApiResponse(
+            HTTP_RESPONSE_CODE.SUCCESS,
+            projects.map((project) => ({
+                ...project, // spread the object
+                id: sqids.encode([project.id]), // override the original id with encoded id
+            })),
+        ),
+    );
 }

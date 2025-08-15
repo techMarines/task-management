@@ -10,3 +10,20 @@ export async function updateUserDisplayName(userId, newDisplayName) {
         },
     });
 }
+
+export async function getUserById(userId) {
+    return await prisma.user.findUnique({
+        where: {
+            id: userId,
+        },
+    });
+}
+
+export async function getUserVerificationStatus(userId) {
+    // return verification status
+    return await prisma.user.findUnique({
+        where: {
+            id: userId,
+        },
+    });
+}
