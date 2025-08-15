@@ -1,3 +1,3 @@
-const projectName = "<placeholder>";
+const projectName = "orbit";
 
 export default () => projectName;

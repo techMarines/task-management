@@ -15,6 +15,15 @@
     -moz-osx-font-smoothing: grayscale;
 }
 
+html, body, #root {
+  height: 100%;
+}
+
+.scroller {
+  overflow-y: scroll;
+  scrollbar-color: var(--color-purple-700) var(--color-gray-800) 
+}
+
 body {
-    @apply h-screen w-screen overflow-hidden;
+    @apply w-screen overflow-hidden;
 }
