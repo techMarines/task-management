@@ -1,0 +1,48 @@
+import apiClient from "#config/api";
+
+export async function getEmailVerificationLink() {
+    try {
+        const response = await apiClient.get(`auth/get-email-verification-link/${localStorage.getItem("userId")}`);
+
+        return response.data;
+    } catch (err) {
+        return err.response.data || "Couldn't send link due to server error, try again later";
+    }
+}
+
+export async function verifyEmail(token) {
+    try {
+        const response = await apiClient.get(`auth/verify-email/${token}`);
+        return response.data;
+    } catch (err) {
+        return err.response.data || "Couldn't verify email, try again later.";
+    }
+}
+
+export async function login(userName, password) {
+    try {
+        const response = await apiClient.post(`auth/login`, {
+            userName: userName,
+            password: password,
+        });
+
+        return response.data;
+    } catch (err) {
+        // On failure, return a structured error object
+        // err.response.data contains the error payload from the server
+        return err.response.data || "Login failed";
+    }
+}
+
+export async function register(userName, password) {
+    try {
+        const response = await apiClient.post(`auth/register`, {
+            userName: userName,
+            password: password,
+        });
+
+        return response.data;
+    } catch (err) {
+        return err.response.data || "Sign up failed";
+    }
+}
