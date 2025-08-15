@@ -15,9 +15,7 @@ export async function createUserProject(projectName, projectDescription) {
 
 export async function getUserProjects() {
     try {
-        const response = await apiClient.get("/project/byUserId", {});
-
-        console.log(response.data);
+        const response = await apiClient.get(`/project/byUserId/${localStorage.getItem("userId")}`, {});
         return response.data;
     } catch (err) {
         return err.response.data || "Couldn't create project";

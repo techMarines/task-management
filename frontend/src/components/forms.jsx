@@ -6,7 +6,9 @@ import getProjectName from "#constants/projectName";
 import * as projectServices from "#services/projectServices"
 import Input from "#components/ui/Input";
 import TextArea from "#components/ui/TextArea";
-import Button from "#components/ui/Button";
+import NavButton from "#components/ui/NavButton";
+
+const userId = localStorage.getItem("userId");
 
 export function AuthForm() {
     const [input, setInput] = useOutletContext().input;
@@ -83,7 +85,7 @@ export function AuthForm() {
     return (
         <div className="flex w-full flex-col items-center justify-center px-3 py-10 md:px-6 xl:w-1/2">
             <h1 className="mb-[10%] w-full text-center text-5xl break-words text-white">
-                {authState === "l{ changeDisplayName }ogin" ? `Login to ${getProjectName()}` : "Create an account"}
+                {authState === "login" ? `Login to ${getProjectName()}` : "Create an account"}
             </h1>
 
             <div className="text-md mb-2 w-full text-center font-mono text-red-700 md:w-10/12">{error ? error : ""}</div>
@@ -135,7 +137,6 @@ export function AuthForm() {
 
 export function ChangeDisplayNameForm() {
     const [input, setInput] = useState();
-    const [displayName, setDisplayName] = useOutletContext().displayName;
     const [error, setError] = useOutletContext().error;
 
     const navigate = useNavigate();
@@ -152,11 +153,9 @@ export function ChangeDisplayNameForm() {
             return;
         }
 
-        localStorage.setItem("displayName", response.data.displayName);
-        setDisplayName(response.data.displayName);
         setError(null);
 
-        navigate("/profile");
+        navigate(`/profile/${userId}`);
     };
 
     const handleInput = (e) => {
@@ -166,7 +165,7 @@ export function ChangeDisplayNameForm() {
     return (
         <Form onSubmit={handleSubmit} className="flex h-full w-full flex-col items-center justify-center">
             <Input onChange={handleInput} placeholder={"New Display Name"} cssClasses="w-2/3" isRequired={true} />
-            <Button type={"submit"} buttonText={"Confirm"} cssClasses="w-1/2 mt-10 px-6 py-3" />
+            <NavButton type={"submit"} buttonText={"Confirm"} cssClasses="w-1/2 mt-10 px-6 py-3" />
         </Form>
     );
 }
@@ -189,18 +188,18 @@ export function CreateUserProjectForm() {
     }
 
     const handleSubmit = async () => {
-        const response = projectServices.createUserProject(input.projectName, input.projectDescription);
+        const response = await projectServices.createUserProject(input.projectName, input.projectDescription);
         projects.push(response.data);
         setProjects(projects);
 
-        navigate(-1);
+        navigate(`/project/byUserId/${userId}`);
     };
 
     return (
-        <Form onSubmit={handleSubmit} className="flex h-full flex-col items-center justify-center">
+        <Form onSubmit={handleSubmit} className="flex w-full h-full flex-col items-center justify-center">
             <Input name="projectName" onChange={handleInput} placeholder="Project name" isRequired={true} />
             <TextArea name="projectDescription" onChange={handleInput} placeholder="Project description" cssClasses="h-8/12" />
-            <Button type={"submit"} buttonText={"Confirm"} cssClasses="w-1/2 mt-4 px-6 py-3" />
+            <NavButton type={"submit"} buttonText={"Confirm"} extraClasses="w-8/12" />
         </Form >
     );
 }
