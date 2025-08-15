@@ -1,5 +1,24 @@
 import apiClient from "#config/api";
 
+export async function getEmailVerificationLink() {
+    try {
+        const response = await apiClient.get(`auth/get-email-verification-link/${localStorage.getItem("userId")}`);
+
+        return response.data;
+    } catch (err) {
+        return err.response.data || "Couldn't send link due to server error, try again later";
+    }
+}
+
+export async function verifyEmail(token) {
+    try {
+        const response = await apiClient.get(`auth/verify-email/${token}`);
+        return response.data;
+    } catch (err) {
+        return err.response.data || "Couldn't verify email, try again later.";
+    }
+}
+
 export async function login(userName, password) {
     try {
         const response = await apiClient.post(`auth/login`, {

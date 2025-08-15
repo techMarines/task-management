@@ -25,5 +25,7 @@ export async function updateFeatureDetails(req, res) {
 
     await featureDetailServices.updateFeatureDetails(featureId, updateData);
 
-    res.status(HTTP_RESPONSE_CODE.SUCCESS).json(new ApiResponse(HTTP_RESPONSE_CODE.SUCCESS));
+    res.status(HTTP_RESPONSE_CODE.SUCCESS).json(
+        new ApiResponse(HTTP_RESPONSE_CODE.SUCCESS, {}, "Feature deatils updated successfuly"),
+    );
 }

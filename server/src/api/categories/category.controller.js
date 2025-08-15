@@ -26,7 +26,13 @@ export async function createCategory(req, res) {
     const categoryAlreadyExists = await categoryServices.getProjectCategoryByName(categoryName, projectId);
     if (categoryAlreadyExists) throw new ApiError(HTTP_RESPONSE_CODE.CONFLICT, "Category already exists in the project");
 
-    const category = await categoryServices.createCategory(projectId, categoryName, categoryDescription, categoryColorCode, categoryParentId);
+    const category = await categoryServices.createCategory(
+        projectId,
+        categoryName,
+        categoryDescription,
+        categoryColorCode,
+        categoryParentId,
+    );
 
     res.status(HTTP_RESPONSE_CODE.CREATED).json(
         new ApiResponse(
