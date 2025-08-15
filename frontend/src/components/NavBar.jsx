@@ -1,8 +1,10 @@
-import { Link } from "react-router";
+import { Link, useRouteLoaderData } from "react-router";
 import { useState } from "react";
 
 export default function NavBar() {
     const [isMenuActive, setMenuStatus] = useState(false);
+    const userDetails = useRouteLoaderData('protected')
+    const activeProjectId = userDetails?.activeProjectId;
 
     const toggleMenuState = () => {
         setMenuStatus(!isMenuActive);
@@ -36,10 +38,10 @@ export default function NavBar() {
                 <Link to={`project/byUserId/${localStorage.getItem("userId")}`} className={navClass}>
                     Projects
                 </Link>
-                <Link to="tree-view" className={navClass}>
+                <Link to={`tree-view/${activeProjectId}`} className={navClass}>
                     Tree View
                 </Link>
-                <Link to="kanbhan" className={navClass}>
+                <Link to={`kanbhan/${activeProjectId}`} className={navClass}>
                     Kanbhan
                 </Link>
                 <Link to={`profile/${localStorage.getItem("userId")}`} className={navClass + " mr-[5%] ml-[5%]"}>
@@ -54,10 +56,10 @@ export default function NavBar() {
                 <Link to={`project/byUserId/${localStorage.getItem("userId")}`} className={navClassMenu}>
                     Projects
                 </Link>
-                <Link to="tree-view/${localStorage.}" className={navClassMenu}>
+                <Link to={`tree-view/${activeProjectId}`} className={navClassMenu}>
                     Tree View
                 </Link>
-                <Link to="kanbhan" className={navClassMenu}>
+                <Link to={`kanbhan/${activeProjectId}`} className={navClassMenu}>
                     Kanbhan
                 </Link>
                 <Link to={`profile/${localStorage.getItem("userId")}`} className={navClassMenu}>

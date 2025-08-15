@@ -21,3 +21,15 @@ export async function getUserProjects() {
         return err.response.data || "Couldn't create project";
     }
 }
+
+export async function updateActiveProject(projectId) {
+    try {
+        const response = await apiClient.patch(`/user/${localStorage.getItem("userId")}/updateUserActiveProject`, {
+            projectId: projectId,
+        });
+
+        return response.data;
+    } catch (err) {
+        return err.response.data || "Couldn't set the project as active";
+    }
+}

@@ -2,6 +2,7 @@ import AuthPage from "#pages/AuthPages";
 import ErrorPage from "#pages/ErrorPage";
 import VerifyEmailPage from "#components/auth/VerifyEmail";
 import App from "./App";
+
 import ProjectComponent from "#components/homepage/ProjectComponent";
 import KanBhanComponent from "#components/homepage/KanbhanComponent";
 import TreeViewComponent from "#components/homepage/TreeViewComponent";
@@ -35,6 +36,7 @@ const routes = [
             {
                 element: <ProtectedLayout />,
                 loader: protectedLoader,
+                id: 'protected',
                 children: [
                     {
                         path: "project/byUserId/:userId",

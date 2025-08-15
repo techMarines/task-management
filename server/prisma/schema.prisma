@@ -8,18 +8,19 @@ datasource db {
 }
 
 model User {
-    id                         Int                         @id @default(autoincrement()) @map("user_id")
-    name                       String                      @map("user_name") @db.VarChar(128)
-    hashedPassword             String                      @map("hashed_password") @db.VarChar(128)
-    isDeleted                  Boolean                     @default(false) @map("is_deleted")
-    deletedAt                  DateTime?                   @map("deleted_at") @db.Timestamp(6)
-    createdAt                  DateTime?                   @default(now()) @map("created_at") @db.Timestamp(6)
-    updatedAt                  DateTime?                   @updatedAt @map("updated_at") @db.Timestamp(6)
-    displayName                String                      @default("PleaseChangeTheDisplayName") @map("display_name") @db.VarChar(64)
-    isVerified                 Boolean                     @default(false) @map("is_verified")
+    id                         Int                          @id @default(autoincrement()) @map("user_id")
+    name                       String                       @map("user_name") @db.VarChar(128)
+    hashedPassword             String                       @map("hashed_password") @db.VarChar(128)
+    isDeleted                  Boolean                      @default(false) @map("is_deleted")
+    deletedAt                  DateTime?                    @map("deleted_at") @db.Timestamp(6)
+    createdAt                  DateTime?                    @default(now()) @map("created_at") @db.Timestamp(6)
+    updatedAt                  DateTime?                    @updatedAt @map("updated_at") @db.Timestamp(6)
+    displayName                String                       @default("PleaseChangeTheDisplayName") @map("display_name") @db.VarChar(64)
+    isVerified                 Boolean                      @default(false) @map("is_verified")
+    activeProjectId            Int?                         @map("active_project_id")
     assignedFeatures           FeatureDetail[]
     projectMemberships         projectUser[]
-    userEmailVerificationToken userEmailVerificationToken?
+    userEmailVerificationToken userEmailVerificationToken[]
 
     @@map("users")
 }
@@ -147,10 +148,11 @@ model projectUser {
 }
 
 model userEmailVerificationToken {
-    userId            Int      @id @map("user_id")
-    verificationToken String?  @unique @map("verification_token") @db.VarChar(64)
+    userId            Int      @map("user_id")
+    verificationToken String   @unique @map("verification_token") @db.VarChar(64)
     expiresAt         DateTime @default(now()) @map("expires_at") @db.Timestamp(6)
     users             User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
+    @@id([userId, verificationToken])
     @@map("user_email_verification_token")
 }

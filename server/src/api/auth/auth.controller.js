@@ -22,7 +22,7 @@ export async function register(req, res) {
     }
 
     const createdUser = await authServices.createUser(userName, hashedPassword);
-    const encodedCreateUserId = await sqids.encode([createdUser.id]);
+    const encodedCreateUserId = sqids.encode([createdUser.id]);
 
     // create a token
     const token = jwt.sign({ id: createdUser.id }, process.env.JWT_SECRET, { expiresIn: "24h" });
@@ -50,7 +50,7 @@ export async function login(req, res) {
         throw new ApiError(HTTP_RESPONSE_CODE.UNAUTHORIZED, "Wrong username or password");
     }
 
-    const encodedUserId = await sqids.encode([user.id]);
+    const encodedUserId = sqids.encode([user.id]);
 
     const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
         expiresIn: "24h",
