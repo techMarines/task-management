@@ -19,11 +19,12 @@ export async function verifyEmail(token) {
     }
 }
 
-export async function login(userName, password) {
+export async function login(userName, password, rememberMe) {
     try {
         const response = await apiClient.post(`auth/login`, {
             userName: userName,
             password: password,
+            rememberMe: rememberMe,
         });
 
         return response.data;
