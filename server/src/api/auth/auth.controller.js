@@ -30,7 +30,7 @@ export async function register(req, res) {
     res.status(HTTP_RESPONSE_CODE.CREATED).json(
         new ApiResponse(
             HTTP_RESPONSE_CODE.CREATED,
-            { userId: encodedCreateUserId, displayName: createdUser.displayName, token },
+            { displayName: createdUser.displayName, token },
             "User registered successfuly",
         ),
     );
@@ -57,11 +57,7 @@ export async function login(req, res) {
     });
 
     res.status(HTTP_RESPONSE_CODE.SUCCESS).json(
-        new ApiResponse(
-            HTTP_RESPONSE_CODE.SUCCESS,
-            { userId: encodedUserId, displayName: user.displayName, token },
-            "User logged in successfuly",
-        ),
+        new ApiResponse(HTTP_RESPONSE_CODE.SUCCESS, { displayName: user.displayName, token }, "User logged in successfuly"),
     );
 }
 

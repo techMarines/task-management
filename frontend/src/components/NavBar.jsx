@@ -35,7 +35,7 @@ export default function NavBar() {
                     {isMenuActive ? "Hide Menu" : "Show Menu"}
                 </button>
                 {/* navigation links */}
-                <Link to={`project/byUserId/${localStorage.getItem("userId")}`} className={navClass}>
+                <Link to="project/user/me" className={navClass}>
                     Projects
                 </Link>
                 <Link to={`tree-view/${activeProjectId}`} className={navClass}>
@@ -44,28 +44,29 @@ export default function NavBar() {
                 <Link to={`kanbhan/${activeProjectId}`} className={navClass}>
                     Kanbhan
                 </Link>
-                <Link to={`profile/${localStorage.getItem("userId")}`} className={navClass + " mr-[5%] ml-[5%]"}>
+                <Link to="profile/me" className={navClass + " mr-[5%] ml-[5%]"}>
                     Profile
                 </Link>
-            </section>
+            </section >
 
             {/* pop menu when on small screens */}
-            <div
-                className={`${isMenuActive ? "block" : "hidden"} bg-gray-900 absolute h-74 translate-x-full translate-y-20 w-1/2 rounded-xl border-2 border-purple-200 md:hidden`}
+            < div
+                className={`${isMenuActive ? "block" : "hidden"} bg-gray-900 absolute h-74 translate-x-full translate-y-20 w-1/2 rounded-xl border-2 border-purple-200 md:hidden`
+                }
             >
-                <Link to={`project/byUserId/${localStorage.getItem("userId")}`} className={navClassMenu}>
+                <Link to="project/byUserId/me" className={navClassMenu}>
                     Projects
-                </Link>
+                </Link >
                 <Link to={`tree-view/${activeProjectId}`} className={navClassMenu}>
                     Tree View
                 </Link>
                 <Link to={`kanbhan/${activeProjectId}`} className={navClassMenu}>
                     Kanbhan
                 </Link>
-                <Link to={`profile/${localStorage.getItem("userId")}`} className={navClassMenu}>
+                <Link to="profile/me" className={navClassMenu}>
                     Profile
                 </Link>
-            </div>
+            </div >
         </nav >
     );
 }

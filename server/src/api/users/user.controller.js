@@ -21,7 +21,7 @@ export async function updateUserDisplayName(req, res) {
     );
 }
 
-export async function getUserById(req, res) {
+export async function getUserDetails(req, res) {
     const userId = req.userId;
 
     const user = await userServices.getUserById(userId);
@@ -33,7 +33,6 @@ export async function getUserById(req, res) {
 
     res.status(HTTP_RESPONSE_CODE.SUCCESS).json(
         new ApiResponse(HTTP_RESPONSE_CODE.SUCCESS, {
-            id: sqids.encode([user.id]),
             displayName: user.displayName,
             isVerified: user.isVerified,
             activeProjectId: user.activeProjectId,

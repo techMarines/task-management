@@ -25,7 +25,7 @@ const routes = [
         children: [
             // profile route is now a top-level child (always accessible)
             {
-                path: "profile/:userId",
+                path: "profile/me",
                 element: <ProfileComponent />,
                 loader: loadUserDetails,
                 children: [
@@ -39,7 +39,7 @@ const routes = [
                 id: 'protected',
                 children: [
                     {
-                        path: "project/byUserId/:userId",
+                        path: "project/user/me",
                         element: <ProjectComponent />,
                         loader: loadUserProjects,
                         children: [{ path: "create-user-project", element: <PopUpMedium>{<forms.CreateUserProjectForm />}</PopUpMedium> }],
@@ -56,7 +56,7 @@ const routes = [
         children: [
             { path: "login", element: <forms.AuthForm /> },
             { path: "register", element: <forms.AuthForm /> },
-            { path: "get-email-verification-link/:userId", element: <EmailVerificationComponent /> }
+            { path: "get-email-verification-link/me", element: <EmailVerificationComponent /> }
         ],
     },
     {
