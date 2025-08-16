@@ -9,13 +9,14 @@ export default function AuthPage() {
     const [input, setInput] = useState({
         username: "",
         password: "",
+        rememberMe: false,
     });
 
     // email verification auth
     if (isAuthForEmail) {
         return (
             <div className="flex h-screen w-screen items-center justify-center bg-gray-950 font-bold">
-                <div className="flex flex-col items-center xl:flex-row h-6/12 w-11/12 overflow-hidden bg-gradient-to-r from-purple-500 via-purple-600 to-fuchsia-800 xl:h-[75%] xl:w-[75%]">
+                <div className="flex flex-col items-center xl:flex-row h-6/12 w-11/12 overflow-hidden bg-gray-800 xl:h-[75%] xl:w-[75%]">
                     {/* image */}
                     <div className={`hidden xl:block h-full w-1/2 p-[1%]`}>
                         <img src={authPhoto} alt="auth visual" className="h-full w-full rounded-2xl object-cover" />

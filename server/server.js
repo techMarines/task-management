@@ -1,4 +1,5 @@
 import express from "express";
+import cookieParser from "cookie-parser";
 import apiRouter from "#api/index";
 import errorHandler from "#middlewares/error.middleware";
 import dotenv from "dotenv";
@@ -20,11 +21,15 @@ const corsOptions = {
             callback(new Error("Not allowed by CORS"));
         }
     },
+    credentials: true, // to allow cookies
 };
 app.use(cors(corsOptions));
 
 // middleware for parsing json
 app.use(express.json());
+
+// middleware for parsing cookies
+app.use(cookieParser());
 
 // mount API router
 app.use("/api", apiRouter);

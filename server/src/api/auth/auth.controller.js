@@ -11,7 +11,7 @@ import sqids from "#config/sqids";
 const saltRounds = 12;
 
 export async function register(req, res) {
-    const { userName, password } = req.body;
+    const { userName, password, rememberMe } = req.body;
 
     // encrypt the password
     const hashedPassword = await bcrypt.hash(password, saltRounds);
@@ -22,26 +22,38 @@ export async function register(req, res) {
     }
 
     const createdUser = await authServices.createUser(userName, hashedPassword);
-    const encodedCreateUserId = sqids.encode([createdUser.id]);
+    const encodedCreatedUserId = sqids.encode([createdUser.id]);
 
-    // create a token
-    const token = jwt.sign({ id: createdUser.id }, process.env.JWT_SECRET, { expiresIn: "24h" });
+    const token = jwt.sign({ id: encodedCreatedUserId }, process.env.JWT_SECRET, {
+        expiresIn: rememberMe ? "30d" : "24h", // tokens expires after longer time if remember me option is selected
+    });
 
-    res.status(HTTP_RESPONSE_CODE.CREATED).json(
-        new ApiResponse(
-            HTTP_RESPONSE_CODE.CREATED,
-            { displayName: createdUser.displayName, token },
-            "User registered successfuly",
-        ),
-    );
+    const cookieOptions = {
+        httpOnly: true, // prevents client side JS from reading the contents of the cookie
+        secure: process.env.NODE_ENV === "production", // send cookie over HTTPS when in prod
+        sameSite: "strict", // helps prevent CSRF attacks
+    };
+
+    if (rememberMe) {
+        cookieOptions.expires = new Date(Date.now() + 1000 * 60 * 60 * 24 * 30); // 30 days
+    }
+
+    // if rememberMe option is not selected the cookie's expiresAt option is not set making it a session cookie
+    // therefore deleting it when browser closes, plus jwt token expires in 24h
+
+    res.cookie("jwt_token", token, cookieOptions)
+        .status(HTTP_RESPONSE_CODE.CREATED)
+        .json(
+            new ApiResponse(HTTP_RESPONSE_CODE.CREATED, { displayName: createdUser.displayName }, "User registered successfuly"),
+        );
 }
 
 export async function login(req, res) {
-    const { userName, password } = req.body;
+    const { userName, password, rememberMe } = req.body;
 
     const user = await authServices.checkIfUserExists(userName);
     if (!user) {
-        // being intentionally vague about correctness of username to make it harder to randomly guess username
+        // returning both wrong username or password to avoid leaking email to unauthorized users
         throw new ApiError(HTTP_RESPONSE_CODE.UNAUTHORIZED, "Wrong username or password");
     }
 
@@ -52,13 +64,26 @@ export async function login(req, res) {
 
     const encodedUserId = sqids.encode([user.id]);
 
-    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
-        expiresIn: "24h",
+    const token = jwt.sign({ id: encodedUserId }, process.env.JWT_SECRET, {
+        expiresIn: rememberMe ? "30d" : "24h", // tokens expires after longer time if remember me option is selected
     });
 
-    res.status(HTTP_RESPONSE_CODE.SUCCESS).json(
-        new ApiResponse(HTTP_RESPONSE_CODE.SUCCESS, { displayName: user.displayName, token }, "User logged in successfuly"),
-    );
+    const cookieOptions = {
+        httpOnly: true, // prevents client side JS from reading the contents of the cookie
+        secure: process.env.NODE_ENV === "production", // send cookie over HTTPS when in prod
+        sameSite: "strict", // helps prevent CSRF attacks
+    };
+
+    if (rememberMe) {
+        cookieOptions.expires = new Date(Date.now() + 1000 * 60 * 60 * 24 * 30); // 30 days
+    }
+
+    // if rememberMe option is not selected the cookie's expiresAt option is not set making it a session cookie
+    // therefore deleting it when browser closes, plus jwt token expires in 24h
+
+    res.cookie("jwt_token", token, cookieOptions)
+        .status(HTTP_RESPONSE_CODE.SUCCESS)
+        .json(new ApiResponse(HTTP_RESPONSE_CODE.SUCCESS, { displayName: user.displayName }, "User logged in successfuly"));
 }
 
 export async function sendLinkForEmailVerification(req, res) {

@@ -1,6 +1,15 @@
 import { getEmailVerificationLink } from "#services/authServices";
 import { useState, useEffect, useRef } from "react";
 
+export function LinkToGmail() {
+    return (
+        <section className="text-xl px-6 mt-4 text-center text-purple-100 sm:mt-16">
+            You can manually go to gmail or click the link below.
+            <a href="https://www.gmail.com" className="block text-center text-blue-700 underline mt-4">Open Gmail</a>
+        </section>
+    )
+}
+
 export default function EmailVerificationComponent() {
     // status : 'sending', 'sent', or 'error'
     const [status, setStatus] = useState('Sending');
@@ -33,9 +42,10 @@ export default function EmailVerificationComponent() {
 
 
     return (
-        <div className={`h-full w-full xl:w-1/2 py-8 flex flex-col justify-center items-center text-4xl ${status === "Error" ? "text-red-600" : "text-amber-100"}`}>
+        <div className={`h-full w-full xl:w-1/2 py-8 text-center mt-18 xl:mt-90 text-5xl ${status === "Error" ? "text-red-600" : "text-green-300"}`}>
             {status}
             <div className="text-2xl px-6">{message}</div>
+            {status === 'Sent' && <LinkToGmail />}
         </div>
     );
 };
