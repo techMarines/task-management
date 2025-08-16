@@ -1,26 +1,22 @@
+import sqids from "#config/sqids";
 import { HTTP_RESPONSE_CODE } from "#constants/api.response.codes";
 import { ApiError } from "#utils/api.error";
 import jwt from "jsonwebtoken";
 
 function authMiddleware(req, res, next) {
-    const authHeader = req.headers["authorization"];
+    const token = req.cookies.jwt_token;
 
-    // postman sends the token as Bearer <token>
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
-        throw new ApiError(
-            HTTP_RESPONSE_CODE.UNAUTHORIZED,
-            "No token provided or token is malformed",
-        );
+    if (!token) {
+        throw new ApiError(HTTP_RESPONSE_CODE.UNAUTHORIZED, "No token provided, authorization denied");
     }
-
-    const token = authHeader.split(" ")[1];
 
     jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
         if (err) {
             throw new ApiError(HTTP_RESPONSE_CODE.UNAUTHORIZED, "Invalid token");
         }
 
-        req.userId = decoded.id;
+        const decodedSqidId = sqids.decode(decoded.id)[0];
+        req.userId = decodedSqidId;
         next();
     });
 }

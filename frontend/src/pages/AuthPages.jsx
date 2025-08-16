@@ -9,6 +9,7 @@ export default function AuthPage() {
     const [input, setInput] = useState({
         username: "",
         password: "",
+        rememberMe: false,
     });
 
     // email verification auth

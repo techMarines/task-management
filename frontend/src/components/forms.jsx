@@ -55,11 +55,10 @@ export function AuthForm() {
         } else clearError();
 
         const response = await (authState === "login"
-            ? authServices.login(input.username, input.password)
-            : authServices.register(input.username, input.password));
+            ? authServices.login(input.username, input.password, input.rememberMe)
+            : authServices.register(input.username, input.password, input.rememberMe));
 
         if (response.success) {
-            localStorage.setItem("jwt_token", response.data.token);
             navigate("/");
         } else {
             setError(response.message);
@@ -71,7 +70,9 @@ export function AuthForm() {
     };
 
     const handleInput = (e) => {
-        const { name, value } = e.target;
+        const name = e.target.name;
+        // checkbox status is found in the field checked, while its in the field value for other inputs like text or password.
+        const value = e.target.name === 'rememberMe' ? e.target.checked : e.target.value;
         setInput((prev) => ({
             ...prev,
             [name]: value,
@@ -84,6 +85,7 @@ export function AuthForm() {
                 {authState === "login" ? `Login to ${getProjectName()}` : "Create an account"}
             </h1>
 
+            {/* display error if any */}
             <div className="text-md mb-2 w-full text-center font-mono text-red-700 md:w-10/12">{error ? error : ""}</div>
             <Form onSubmit={handleSubmitEvent} className="flex w-full flex-col items-center">
                 <Input
@@ -102,6 +104,7 @@ export function AuthForm() {
                     onChange={handleInput}
                     isRequired={true}
                 />
+                {/* toggles the visibility of the password, i.e., hide or show */}
                 <button
                     type="button"
                     onClick={togglePasswordVisibility}
@@ -109,6 +112,12 @@ export function AuthForm() {
                 >
                     {isPasswordVisible ? "HIDE" : "SHOW"}
                 </button>
+                {/* remember me checkbox */}
+                <div className="ml-auto mr-24">
+                    <input type="checkbox" name="rememberMe" onClick={handleInput} className="w-5 h-5 mr-2" />
+                    <label htmlFor="rememberMe" className="text-xl">Remember me</label>
+                </div>
+                {/* login or create acccount button depending on type of auth*/}
                 <button
                     type="submit"
                     className="my-10 w-full cursor-pointer rounded-lg bg-purple-800 from-violet-500 to-fuchsia-500 py-4 text-xl font-bold hover:bg-gradient-to-bl md:w-10/12"
@@ -117,6 +126,7 @@ export function AuthForm() {
                 </button>
             </Form>
 
+            {/*link to change auth type*/}
             <div className="my-4 text-white">
                 {authState === "login" ? "Don't" : "Already"} have an account?{" "}
                 <Link
