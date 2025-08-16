@@ -2,7 +2,7 @@ import apiClient from "#config/api";
 
 export async function getEmailVerificationLink() {
     try {
-        const response = await apiClient.get(`auth/get-email-verification-link/${localStorage.getItem("userId")}`);
+        const response = await apiClient.get("auth/get-email-verification-link/me");
 
         return response.data;
     } catch (err) {

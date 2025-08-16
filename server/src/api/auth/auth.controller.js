@@ -22,7 +22,7 @@ export async function register(req, res) {
     }
 
     const createdUser = await authServices.createUser(userName, hashedPassword);
-    const encodedCreateUserId = await sqids.encode([createdUser.id]);
+    const encodedCreateUserId = sqids.encode([createdUser.id]);
 
     // create a token
     const token = jwt.sign({ id: createdUser.id }, process.env.JWT_SECRET, { expiresIn: "24h" });
@@ -30,7 +30,7 @@ export async function register(req, res) {
     res.status(HTTP_RESPONSE_CODE.CREATED).json(
         new ApiResponse(
             HTTP_RESPONSE_CODE.CREATED,
-            { userId: encodedCreateUserId, displayName: createdUser.displayName, token },
+            { displayName: createdUser.displayName, token },
             "User registered successfuly",
         ),
     );
@@ -50,18 +50,14 @@ export async function login(req, res) {
         throw new ApiError(HTTP_RESPONSE_CODE.UNAUTHORIZED, "Wrong username or password");
     }
 
-    const encodedUserId = await sqids.encode([user.id]);
+    const encodedUserId = sqids.encode([user.id]);
 
     const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
         expiresIn: "24h",
     });
 
     res.status(HTTP_RESPONSE_CODE.SUCCESS).json(
-        new ApiResponse(
-            HTTP_RESPONSE_CODE.SUCCESS,
-            { userId: encodedUserId, displayName: user.displayName, token },
-            "User logged in successfuly",
-        ),
+        new ApiResponse(HTTP_RESPONSE_CODE.SUCCESS, { displayName: user.displayName, token }, "User logged in successfuly"),
     );
 }
 

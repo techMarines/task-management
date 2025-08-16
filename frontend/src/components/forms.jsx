@@ -8,7 +8,6 @@ import Input from "#components/ui/Input";
 import TextArea from "#components/ui/TextArea";
 import NavButton from "#components/ui/NavButton";
 
-const userId = localStorage.getItem("userId");
 
 export function AuthForm() {
     const [input, setInput] = useOutletContext().input;
@@ -61,9 +60,6 @@ export function AuthForm() {
 
         if (response.success) {
             localStorage.setItem("jwt_token", response.data.token);
-            localStorage.setItem("displayName", response.data.displayName);
-            localStorage.setItem("userId", response.data.userId);
-
             navigate("/");
         } else {
             setError(response.message);
@@ -155,7 +151,7 @@ export function ChangeDisplayNameForm() {
 
         setError(null);
 
-        navigate(`/profile/${userId}`);
+        navigate("/profile/me");
     };
 
     const handleInput = (e) => {
@@ -192,7 +188,7 @@ export function CreateUserProjectForm() {
         projects.push(response.data);
         setProjects(projects);
 
-        navigate(`/project/byUserId/${userId}`);
+        navigate("/project/user/me");
     };
 
     return (
