@@ -54,7 +54,7 @@ export default function VerifyEmailPage() {
                 <>
                     <h1 className="text-6xl font-bold text-green-500">Success!</h1>
                     <p className="mt-4 text-3xl text-gray-400">{message}</p>
-                    <Link to={`/profile/${localStorage.getItem("userId")}`} className="mt-6 text-3xl text-purple-400 underline">
+                    <Link to="/profile/me" className="mt-6 text-3xl text-purple-400 underline">
                         Go to Profile Page
                     </Link>
                 </>
@@ -64,7 +64,7 @@ export default function VerifyEmailPage() {
                 <>
                     <h1 className="text-6xl font-bold text-red-500">Verification Error</h1>
                     <p className="mt-4 text-3xl text-gray-400">{message}</p>
-                    <Link to={`/profile/${localStorage.getItem("userId")}`} className="mt-6 text-3xl text-purple-400 underline">
+                    <Link to="/profile/me" className="mt-6 text-3xl text-purple-400 underline">
                         Go to Profile Page
                     </Link>
                 </>

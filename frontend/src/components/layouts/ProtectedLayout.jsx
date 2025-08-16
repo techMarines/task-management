@@ -1,4 +1,4 @@
-import { Outlet, redirect } from 'react-router';
+import { Outlet, redirect, useLoaderData } from 'react-router';
 import { getUserDetails } from '#services/profileServices';
 
 // This loader function runs BEFORE any child route tries to render
@@ -14,7 +14,6 @@ export async function loader() {
 
         // If verified, return the user data and allow access
         return user;
-
     } catch (error) {
         // If there's any error (e.g., no token), redirect to login
         return redirect('/auth/login');
@@ -22,6 +21,7 @@ export async function loader() {
 }
 
 export default function ProtectedLayout() {
+    const user = useLoaderData();
     // This just renders the child route (e.g., ProjectComponent)
-    return <Outlet />;
+    return <Outlet context={user} />;
 }

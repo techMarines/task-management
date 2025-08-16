@@ -1,6 +1,6 @@
 import NavButton from "#components/ui/NavButton";
 import { getUserProjects } from "#services/projectServices";
-import { Outlet, useLoaderData } from "react-router";
+import { Outlet, useLoaderData, useOutletContext } from "react-router";
 import { useState } from "react";
 import ProjectCard from "#components/cards/ProjectCard";
 
@@ -13,10 +13,11 @@ export async function loader() {
 }
 
 export default function ProjectsComponenet() {
-    const projectsLoaded = useLoaderData();
-    const [projects, setProjects] = useState(projectsLoaded);
+    const projectsLoaded = useLoaderData(); // gets all user project
+    const [projects, setProjects] = useState(projectsLoaded); // sets the list of project as a state so anychanges to the list will trigger rerender
     const [error, setError] = useState(null);
-    const activeProjectId = "3T2WpPTc";
+    const user = useOutletContext(); // gets user details we are only interested in activeProjectId
+    const [activeProjectId, setActiveProjectId] = useState(user?.activeProjectId || null); // the projectCard's button sets and unsets active projects
 
     return (
         <div className="h-full flex flex-col">
@@ -33,7 +34,7 @@ export default function ProjectsComponenet() {
             </div>
             {/* projects */}
             <div className="w-full grow scroller">
-                {projects.map(project => <ProjectCard key={project.id} id={project.id} activeProjectId={activeProjectId}>{project}</ProjectCard>)}
+                {projects.map(project => <ProjectCard key={project.id} id={project.id} setActiveProjectId={setActiveProjectId} activeProjectId={activeProjectId}>{project}</ProjectCard>)}
             </div>
             {/* popup */}
             <Outlet context={{ projects: [projects, setProjects], error: [error, setError] }} />

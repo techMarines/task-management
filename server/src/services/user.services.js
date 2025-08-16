@@ -1,5 +1,38 @@
 import prisma from "#config/prisma.client";
 
+export async function updateUserActiveProject(userId, projectId) {
+    return await prisma.$transaction(async (tx) => {
+        // check if user is part of the project
+        // no need to check is project is being set as inactive., therefore null
+        if (projectId) {
+            const userProject = await tx.project.findUnique({
+                where: {
+                    id: projectId,
+                    projectUsers: {
+                        some: {
+                            userId: userId,
+                        },
+                    },
+                },
+            });
+
+            // send false flag to signify failure to update as user isn't part of the project
+            if (!userProject) false;
+        }
+
+        const user = await tx.user.update({
+            where: {
+                id: userId,
+            },
+            data: {
+                activeProjectId: projectId,
+            },
+        });
+
+        return !!user;
+    });
+}
+
 export async function updateUserDisplayName(userId, newDisplayName) {
     return await prisma.user.update({
         where: {

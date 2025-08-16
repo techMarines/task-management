@@ -2,6 +2,7 @@ import AuthPage from "#pages/AuthPages";
 import ErrorPage from "#pages/ErrorPage";
 import VerifyEmailPage from "#components/auth/VerifyEmail";
 import App from "./App";
+
 import ProjectComponent from "#components/homepage/ProjectComponent";
 import KanBhanComponent from "#components/homepage/KanbhanComponent";
 import TreeViewComponent from "#components/homepage/TreeViewComponent";
@@ -24,7 +25,7 @@ const routes = [
         children: [
             // profile route is now a top-level child (always accessible)
             {
-                path: "profile/:userId",
+                path: "profile/me",
                 element: <ProfileComponent />,
                 loader: loadUserDetails,
                 children: [
@@ -35,9 +36,10 @@ const routes = [
             {
                 element: <ProtectedLayout />,
                 loader: protectedLoader,
+                id: 'protected',
                 children: [
                     {
-                        path: "project/byUserId/:userId",
+                        path: "project/user/me",
                         element: <ProjectComponent />,
                         loader: loadUserProjects,
                         children: [{ path: "create-user-project", element: <PopUpMedium>{<forms.CreateUserProjectForm />}</PopUpMedium> }],
@@ -54,7 +56,7 @@ const routes = [
         children: [
             { path: "login", element: <forms.AuthForm /> },
             { path: "register", element: <forms.AuthForm /> },
-            { path: "get-email-verification-link/:userId", element: <EmailVerificationComponent /> }
+            { path: "get-email-verification-link/me", element: <EmailVerificationComponent /> }
         ],
     },
     {
