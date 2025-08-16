@@ -34,7 +34,7 @@ export function getUserVerificationComponent(user) {
             {
                 user.isVerified ? "" : <div className="flex w-5/12 justify-end" >
                     <NavButton
-                        navigateTo={`/auth/get-email-verification-link/${localStorage.getItem("userId")}`}
+                        navigateTo="/auth/get-email-verification-link/me"
                         buttonText="Send Verification Link"
                         extraClasses="mr-14"
                     />

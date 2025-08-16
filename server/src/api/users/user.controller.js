@@ -21,17 +21,32 @@ export async function updateUserDisplayName(req, res) {
     );
 }
 
-export async function getUserById(req, res) {
+export async function getUserDetails(req, res) {
     const userId = req.userId;
 
     const user = await userServices.getUserById(userId);
     if (!user) throw new ApiError(HTTP_RESPONSE_CODE.BAD_REQUEST, "User with given id doesn't exist");
 
+    if (user.activeProjectId !== null) {
+        user.activeProjectId = sqids.encode([user.activeProjectId]);
+    }
+
     res.status(HTTP_RESPONSE_CODE.SUCCESS).json(
         new ApiResponse(HTTP_RESPONSE_CODE.SUCCESS, {
-            id: await sqids.encode([user.id]),
             displayName: user.displayName,
             isVerified: user.isVerified,
+            activeProjectId: user.activeProjectId,
         }),
     );
+}
+
+export async function updateUserActiveProject(req, res) {
+    const userId = req.userId;
+    let { projectId } = req.body;
+    if (projectId) [projectId] = sqids.decode(projectId);
+
+    const isUpdated = await userServices.updateUserActiveProject(userId, projectId);
+    if (!isUpdated) throw new ApiError(HTTP_RESPONSE_CODE.UNAUTHORIZED, "User not authorized to access this project");
+
+    res.status(HTTP_RESPONSE_CODE.SUCCESS).json(new ApiResponse(HTTP_RESPONSE_CODE.SUCCESS, {}, "User active project updated"));
 }

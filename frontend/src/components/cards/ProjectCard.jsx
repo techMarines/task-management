@@ -1,6 +1,7 @@
-import NavButton from "#components/ui/NavButton";
+import ActionButton from "#components/ui/ActionButton";
+import { updateActiveProject } from "#services/projectServices";
 
-export default function ProjectCard({ children, id, activeProjectId }) {
+export default function ProjectCard({ children, id, activeProjectId, setActiveProjectId }) {
     const addSpecialClassesForHeaingOrActiveProject = () => {
         let extraClass = "";
         if (children.isHeading) extraClass += "bg-gray-950"
@@ -14,6 +15,14 @@ export default function ProjectCard({ children, id, activeProjectId }) {
         return id && id === activeProjectId;
     }
 
+    const toggleProjectActiveStatus = async () => {
+        const response = await updateActiveProject(id === activeProjectId ? null : id);
+        if (response?.success) {
+            setActiveProjectId(id === activeProjectId ? null : id);
+        }
+    }
+
+
     return (
         <div className={`h-fit py-4 lg:h-32 w-full border-b-1 border-b-gray-700 flex flex-col sm:flex-row items-center px-4 ${addSpecialClassesForHeaingOrActiveProject()}`}>
 
@@ -25,7 +34,8 @@ export default function ProjectCard({ children, id, activeProjectId }) {
 
             {/* Actions container */}
             <div className="shrink-0 w-full sm:w-auto mt-4 sm:mt-0 flex justify-center pr-4">
-                <NavButton
+                <ActionButton
+                    action={toggleProjectActiveStatus}
                     buttonText={isProjectActive() ? "Set As Inactive" : "Set As Active"}
                     extraClasses={`${children.isHeading ? "hidden" : ""}`}
                 />

@@ -6,7 +6,7 @@ import sqids from "#config/sqids";
 
 export async function createProject(req, res) {
     // userId is put into the req by the authMiddleware
-    const { userId } = req;
+    const userId = req.userId;
     let { projectName, projectDescription } = req.body;
 
     // validate input
@@ -28,7 +28,7 @@ export async function createProject(req, res) {
     );
 }
 
-export async function getProjectsByUserId(req, res) {
+export async function getUserProjects(req, res) {
     const userId = req.userId;
 
     const projects = await projectServices.getProjectsByUserId(userId);
